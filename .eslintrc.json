@@ -33,6 +33,7 @@
     "prettier"
   ],
   "rules": {
+    "prefer-const": "warn",
     "no-useless-return": "off",
     "consistent-return": "off",
     "no-else-return": "off",
