@@ -1,4 +1,5 @@
 import { GetStaticProps } from 'next'
+import Link from 'next/link'
 import Prismic from '@prismicio/client'
 import Head from 'next/head'
 import { RichText } from 'prismic-dom'
@@ -6,6 +7,7 @@ import getPrismicClient from '../../services/prismic'
 import styles from './styles.module.scss'
 
 interface Post {
+  id: string
   slug: string
   title: string
   excerpt: string
@@ -26,11 +28,13 @@ export default function Posts({ posts }: PostsProps) {
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts.map(post => (
-            <a key={post.slug} href="#">
-              <time>{post.updatedAt}</time>
-              <strong>{post.title}</strong>
-              <p>{post.excerpt}</p>
-            </a>
+            <Link key={post.id} href={`/posts/${post.slug}`}>
+              <a>
+                <time>{post.updatedAt}</time>
+                <strong>{post.title}</strong>
+                <p>{post.excerpt}</p>
+              </a>
+            </Link>
           ))}
         </div>
       </main>
@@ -51,6 +55,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const posts = response.results.map(post => {
     return {
+      id: post.id,
       slug: post.uid,
       title: RichText.asText(post.data.title),
       excerpt:

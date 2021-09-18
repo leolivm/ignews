@@ -33,6 +33,7 @@
     "prettier"
   ],
   "rules": {
+    "react/no-danger": "off",
     "no-case-declarations": "off",
     "prefer-const": "warn",
     "no-useless-return": "off",
