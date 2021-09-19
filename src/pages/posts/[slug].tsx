@@ -4,7 +4,9 @@ import { GetServerSideProps } from 'next'
 import { RichText } from 'prismic-dom'
 import { ptBR } from 'date-fns/locale'
 import { format } from 'date-fns'
+import { getSession } from 'next-auth/client'
 import getPrismicClient from '../../services/prismic'
+import styles from './post.module.scss'
 
 interface PostProps {
   post: {
@@ -21,11 +23,14 @@ export default function Post({ post }: PostProps) {
       <Head>
         <title>{post.title} | Ignews</title>
       </Head>
-      <main>
-        <article>
+      <main className={styles.container}>
+        <article className={styles.post}>
           <h1>{post.title}</h1>
           <time>{post.updatedAt}</time>
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div
+            dangerouslySetInnerHTML={{ __html: post.content }}
+            className={styles.postContent}
+          />
         </article>
       </main>
     </>
@@ -36,7 +41,17 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   params,
 }) => {
+  const session = await getSession({ req })
   const { slug } = params
+
+  if (!session?.activeSubscription) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
 
   const prismic = getPrismicClient(req)
   const response = await prismic.getByUID('post', String(slug), {})
